@@ -1,6 +1,8 @@
 package grupo10.dsw.Services;
 
 import grupo10.dsw.Entities.Destino;
+import grupo10.dsw.Repositories.DestinoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,19 +12,20 @@ import java.util.*;
 @RequiredArgsConstructor
 public class DestinoService {
 
-    private final Map<UUID, Destino> repository = new HashMap<>();
+    private final DestinoRepository repository;
+    private final DestinoRepository destinoRepository;
 
 
     public Destino create(Destino destino) {
 
-        repository.put( destino.getId(),destino);
+        repository.save( destino);
         return destino;
     }
     public List<Destino> findAll() {
-        return new ArrayList<>(repository.values());
+        return repository.findAll();
     }
     public List<Destino>  find(String nome, String cidade, String estado, String pais) {
-            List<Destino> respostas = repository.values().stream().filter(destino ->
+            List<Destino> respostas = repository.findAll().stream().filter(destino ->
                (pais == null || pais.isEmpty() || destino.getPais().startsWith(pais)) &&
                (nome == null || nome.isEmpty() || destino.getNome().startsWith(nome)) &&
                (cidade == null || cidade.isEmpty() || destino.getCidade().startsWith(cidade)) &&
@@ -36,31 +39,19 @@ public class DestinoService {
         if(nota > 5 || nota < 0){
             return null;
         }
-        Destino destino = repository.get(idDestino);
-        if(destino == null){
-            return null;
-        }
+        Destino destino = this.findById(idDestino);
         destino.setAvaliacoes(nota);
-        repository.put(idDestino,destino);
-        return destino;
+
+        return repository.save(destino);
     }
 
     public void delete(UUID idDestino){
-        Destino destino = repository.get(idDestino);
-        if(destino != null){
-            repository.remove(idDestino);
-        }
-        else{
-            throw new RuntimeException("Destino não encontrado");
-        }
+        Destino d = this.findById(idDestino);
+        repository.delete(d);
     }
 
     public Destino findById(UUID idDestino){
-        Destino destino = repository.get(idDestino);
-        if(destino == null){
-            throw new RuntimeException("Destino não encontrado");
-        }
-        return destino;
+        return repository.findById(idDestino).orElseThrow(() ->  new EntityNotFoundException( "Destino não encontrado" ));
     }
 
 
