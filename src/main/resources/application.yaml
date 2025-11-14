@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: DS-3
+  datasource:
+#    url: jdbc:postgresql://localhost:5432/mydb
+#    username: root
+#    password: 123
+    driver-class-name: org.h2.Driver
+#  data:
+#    jdbc:
+#      dialect: postgresql
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+jwt:
+  secret: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
